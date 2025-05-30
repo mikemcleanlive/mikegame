@@ -11,34 +11,44 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #f0f0f0;
+            background-color: #4682b4; /* Blue background */
         }
         #game-container {
             text-align: center;
         }
         #board {
             display: grid;
-            grid-template-columns: repeat(3, 100px);
+            grid-template-columns: repeat(5, 70px);
             grid-gap: 5px;
             margin: 20px auto;
         }
         .cell {
-            width: 100px;
-            height: 100px;
+            width: 70px;
+            height: 70px;
             background-color: white;
             border: 2px solid #333;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 32px;
             cursor: pointer;
         }
         .cell:hover {
             background-color: #f9f9f9;
         }
+        .cell.x {
+            background-color: #add8e6; /* Light blue for X */
+        }
+        .cell.o {
+            background-color: #90ee90; /* Light green for O */
+        }
+        .cell.m {
+            background-color: #e6e6fa; /* Light purple for M */
+        }
         #status {
             font-size: 24px;
             margin-bottom: 20px;
+            color: white; /* White text for contrast on blue background */
         }
         #restart {
             padding: 10px 20px;
@@ -67,6 +77,22 @@
             <div class="cell" data-index="6"></div>
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
+            <div class="cell" data-index="9"></div>
+            <div class="cell" data-index="10"></div>
+            <div class="cell" data-index="11"></div>
+            <div class="cell" data-index="12"></div>
+            <div class="cell" data-index="13"></div>
+            <div class="cell" data-index="14"></div>
+            <div class="cell" data-index="15"></div>
+            <div class="cell" data-index="16"></div>
+            <div class="cell" data-index="17"></div>
+            <div class="cell" data-index="18"></div>
+            <div class="cell" data-index="19"></div>
+            <div class="cell" data-index="20"></div>
+            <div class="cell" data-index="21"></div>
+            <div class="cell" data-index="22"></div>
+            <div class="cell" data-index="23"></div>
+            <div class="cell" data-index="24"></div>
         </div>
         <button id="restart">Restart Game</button>
     </div>
@@ -77,13 +103,29 @@
         const status = document.getElementById('status');
         const restartButton = document.getElementById('restart');
         let currentPlayer = 'X';
-        let board = ['', '', '', '', '', '', '', '', ''];
+        let board = Array(25).fill('');
         let gameActive = true;
 
         const winningCombinations = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-            [0, 4, 8], [2, 4, 6] // Diagonals
+            // Rows (3 in a row)
+            [0, 1, 2], [1, 2, 3], [2, 3, 4], // First row
+            [5, 6, 7], [6, 7, 8], [7, 8, 9], // Second row
+            [10, 11, 12], [11, 12, 13], [12, 13, 14], // Third row
+            [15, 16, 17], [16, 17, 18], [17, 18, 19], // Fourth row
+            [20, 21, 22], [21, 22, 23], [22, 23, 24], // Fifth row
+            // Columns (3 in a row)
+            [0, 5, 10], [5, 10, 15], [10, 15, 20], // First column
+            [1, 6, 11], [6, 11, 16], [11, 16, 21], // Second column
+            [2, 7, 12], [7, 12, 17], [12, 17, 22], // Third column
+            [3, 8, 13], [8, 13, 18], [13, 18, 23], // Fourth column
+            [4, 9, 14], [9, 14, 19], [14, 19, 24], // Fifth column
+            // Diagonals (3 in a row)
+            [0, 6, 12], [1, 7, 13], [2, 8, 14], // Main diagonals
+            [5, 11, 17], [6, 12, 18], [7, 13, 19],
+            [10, 16, 22], [11, 17, 23], [12, 18, 24],
+            [2, 6, 10], [3, 7, 11], [4, 8, 12], // Anti-diagonals
+            [7, 11, 15], [8, 12, 16], [9, 13, 17],
+            [12, 16, 20], [13, 17, 21], [14, 18, 22]
         ];
 
         cells.forEach(cell => {
@@ -98,6 +140,7 @@
 
             board[index] = currentPlayer;
             cell.textContent = currentPlayer;
+            cell.classList.add(currentPlayer.toLowerCase()); // Add class for color
 
             if (checkWin()) {
                 status.textContent = `Player ${currentPlayer} wins!`;
@@ -112,7 +155,7 @@
                 return;
             }
 
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            currentPlayer = currentPlayer === 'X' ? 'O' : currentPlayer === 'O' ? 'M' : 'X';
             status.textContent = `Player ${currentPlayer}'s turn`;
         }
 
@@ -137,12 +180,13 @@
         }
 
         function restartGame() {
-            board = ['', '', '', '', '', '', '', '', ''];
+            board = Array(25).fill('');
             currentPlayer = 'X';
             gameActive = true;
             status.textContent = "Player X's turn";
             cells.forEach(cell => {
                 cell.textContent = '';
+                cell.classList.remove('x', 'o', 'm'); // Remove player classes
             });
             jsConfetti.clearCanvas();
         }
